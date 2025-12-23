@@ -8,24 +8,21 @@ Requirements can be installed using command
 Initialise database using command
 ``python manage.py migrate``
 
-You can set up a superuser using command
-``python manage.py createsuperuser``
-
 Start the app using command
 ``python manage.py runserver``
 
 
 ### FLAW 1: A02:2021 Cryptographic Failures
 
-Password are currently stored in plaintext
+Passwords are currently stored in plaintext
 
-LINK
-LINK (Custom Plaintext Authentication as Djangos built in log in expects hashed passwords)
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/forms.py#L6)
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/auth_backend.py#L4) (Custom Plaintext Authentication as Djangos built-in login expects hashed passwords)
 
 
 #### Steps to reproduce
 
-1. Go to the sign up page localhost:8000/forum/signup/
+1. Go to the sign-up page localhost:8000/forum/signup/
 2. Fill in user information and password
 
 In order to verify that the passwords are stored as plaintext...
@@ -59,7 +56,7 @@ class SignUpForm(UserCreationForm):
 
 ```
 
-In addition remove the following plaintext authentication tool form ``settings.py``
+In addition, remove the following plaintext authentication tool from ``settings.py``
 ```
 AUTHENTICATION_BACKENDS = [
     "forum.auth_backend.PlainTextAuthBackend",
@@ -73,7 +70,7 @@ The ``auth_backend.py`` file can also be deleted
 
 The application permits default, weak, or well-known passwords, such as "password" and passwords that closely resemble other attributes of the user
 
-LINK
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/mysite/settings.py#L93)
 
 #### Steps to reproduce
 
@@ -101,9 +98,9 @@ NOTE! The fix also requires the changes made to `SignUpForm`` in the fix for the
 
 ### FLAW 3: A01:2021 Broken Access Control
 
-The profile page that displays the username along with email is intended to be only viewable to the user in question. Now anyone can view these pages by changing the id in the url
+The profile page that displays the username along with email is intended to be only viewable to the user in question. Now, anyone can view these pages by changing the id in the url
 
-[LINK](https://github.com/n1k1k/csb-project/blob/d28389d0f91f8cc535322e2b7d98ad42ecbc95d0/src/forum/views.py#L82)
+[LINK](https://github.com/n1k1k/csb-project/blob/d28389d0f91f8cc535322e2b7d98ad42ecbc95d0/src/forum/views.py#L81)
 
 #### Steps to reproduce
 
@@ -123,7 +120,7 @@ The issue can be fixed by first checking if the user is logged in:
       )
 ```
 
-Next we need to check that the id of the currently logged in user matches the given id:
+Next, we need to check that the id of the currently logged-in user matches the given id:
 
 ```
   if request.user.id != user_id:
@@ -138,7 +135,7 @@ Next we need to check that the id of the currently logged in user matches the gi
 
 The app allows access to the admin page without being logged in. The admin page does not fortunately give permission to view or edit anything when logged out, but bypassing the logging page is still a security issue.
 
-LINK
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/admin.py#L7)
 
 #### Steps to reproduce
 
@@ -160,8 +157,7 @@ admin.site.has_permission = (
 
 There is a SQL injection vulnerability in the "Add a New Post" Form.
 
-
-[LINK](https://github.com/n1k1k/csb-project/blob/4f3fffea9cd4e9564fd8c92703336c6c26e28a97/src/forum/views.py#L25)
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/views.py#L)
 
 #### Steps to reproduce
 
