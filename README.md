@@ -26,7 +26,8 @@ Passwords are currently stored in plaintext
 1. Go to the sign-up page localhost:8000/forum/signup/
 2. Fill in user information and password
 
-In order to verify that the passwords are stored as plaintext...
+In order to verify that the passwords are stored as plaintext do the following:
+
 Open Django shell with command ``python manage.py shell`` and execute the following commands:
 1. ``from django.contrib.auth.models import User``
 2. ``u = User.objects.last()``
