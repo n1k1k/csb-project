@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from .models import Comment, Post
+from .forms import SignUpForm
 
 
 def index(request):
@@ -78,17 +79,35 @@ def post(request, post_id):
 
 
 def profile(request, user_id):
+    # ❌ Broken Access Control
     user = get_object_or_404(User, pk=user_id)
+
+    # ✅ FIXED: Enforce authentication and check ownership
+    """
+    if not request.user.is_authenticated:
+        login_url = f"{reverse('login')}?{urlencode({'next': request.get_full_path()})}"
+        return redirect(
+            login_url, error_message="You must be logged in to view profile"
+        )
+
+    if request.user.id != user_id:
+        from django.core.exceptions import PermissionDenied
+
+        raise PermissionDenied("You cannot view other users' profiles.")
+
+    user = request.user
+    """
+
     return render(request, "registration/profile.html", {"user": user})
 
 
 def signup(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect("index")
     else:
-        form = UserCreationForm()
+        form = SignUpForm()
     return render(request, "registration/signup.html", {"form": form})

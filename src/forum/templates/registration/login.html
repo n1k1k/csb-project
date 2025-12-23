@@ -1,5 +1,7 @@
 <h1>Login</h1>
 
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
 {% if form.errors %}
 <p><strong>Please correct the errors below.</strong></p>
 {% endif %}
@@ -14,4 +16,3 @@
 </form>
 
 <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
-<p><a href="{% url 'password_reset' %}">Forgot password?</a></p>

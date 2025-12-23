@@ -8,7 +8,7 @@ Requirements can be installed using command
 Initialise database using command
 ``python manage.py migrate``
 
-Setup superuser using command
+You can set up a superuser using command
 ``python manage.py createsuperuser``
 
 Start the app using command
@@ -47,4 +47,39 @@ There are multiple ways to fix this. One option is to replace the above code wit
 
 ```
 Post.objects.create(title=title, content=content, user=request.user)
+```
+
+
+### FLAW 2: A01:2021 – Broken Access Control
+
+The profile page that displays the username along with email is intended to be only viewable to the user in question. Now anyone can view these pages by changing the id in the url
+
+LINK
+
+#### Steps to reproduce
+
+1. If logged in, log out by clicking the button on the front page.
+2. Go to http://127.0.0.1:8000/forum/profile/<user_id>/
+
+#### How to fix?
+
+The issue can be fixed by first checking if the user is logged in:
+
+```
+  if not request.user.is_authenticated:
+      login_url = f"{reverse('login')}?{urlencode({'next': request.get_full_path()})}"
+      return redirect(
+          login_url, error_message="You must be logged in to view profile"
+      )
+```
+
+Next we need to check that the id of the currently logged in user matches the given id:
+
+```
+  if request.user.id != user_id:
+      from django.core.exceptions import PermissionDenied
+
+      raise PermissionDenied("You cannot view other users' profiles.")
+
+  user = request.user
 ```

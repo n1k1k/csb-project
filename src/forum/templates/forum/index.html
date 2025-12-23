@@ -30,7 +30,7 @@
             <input type="hidden" name="next" value="{% url 'login' %}">
             <button type="submit">Logout</button>
         </form></br>
-        <a href="{% url 'profile' request.user.id %}" class="button">View Profile</a>
+        <a href="{% url 'profile' request.user.id %}" class="button">View Account Information</a>
     {% else %}
         <a href="{% url 'login' %}">Login</a>
     {% endif %}
