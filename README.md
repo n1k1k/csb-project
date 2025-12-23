@@ -17,20 +17,23 @@ Start the app using command
 
 ### FLAW 1: A03:2021 – Injection
 
-SQL injection vulnerability in the "Add a New Post" Form.
-Source link: 
+There is a SQL injection vulnerability in the "Add a New Post" Form.
 
-#### Steps to reproduce:
 
-1. Log in and to http://127.0.0.1:8000/forum/ 
-Open browser and go to http://localhost:8080
+[LINK](https://github.com/n1k1k/csb-project/blob/4f3fffea9cd4e9564fd8c92703336c6c26e28a97/src/forum/views.py#L25)
+
+#### Steps to reproduce
+
+1. Log in and go to http://127.0.0.1:8000/forum/ 
 2. Set the title value to ``test', 'x', 1); PRAGMA foreign_keys=OFF; DELETE FROM forum_post;--``
 3. Set content to any string
 4. Click submit
 
-#### Fix:
+#### How to fix?
 
 The code uses executescript() and raw SQL:
+
+```
 sql = f"""
   INSERT INTO forum_post (title, content, user_id)
   VALUES ('{title}', '{content}', {request.user.id});
@@ -38,7 +41,10 @@ sql = f"""
 
   with connection.cursor() as cursor:
       cursor.executescript(sql)
+```
 
+There are multiple ways to fix this. One option is to replace the above code with the following ORM:
 
- Instead of this it would be better to use ORM
-``Post.objects.create(title=title, content=content, user=request.user)``
+```
+Post.objects.create(title=title, content=content, user=request.user)
+```
