@@ -1,0 +1,58 @@
+<style>
+    .post-box {
+        border: 1px solid #333;
+        padding: 15px 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        width: 50%;
+    }
+    .nav {
+        margin-bottom: 16px;
+    }
+    .nav form {
+        display: inline;
+    }
+    .nav button {
+        color: #0645ad;
+    }
+</style>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<h1>Discussion Forum</h1>
+
+<div class="nav">
+    {% if request.user.is_authenticated %}
+        Hello, {{ request.user.username }}
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'login' %}">
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+</div>
+
+{% if posts_list %}
+    {% for post in posts_list %}
+    <div class="post-box">
+        <a href="{% url 'post' post.id %}">{{ post.title }}</a> by {{ post.user }}
+        <p>{{ post.content }}</p>
+    </div>
+    {% endfor %}
+    
+{% else %}
+    <p>No posts available.</p>
+{% endif %}
+
+<h2>Add a New Post</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" size="50"><br><br>
+    <label for="content">Content:</label><br>
+    <textarea id="content" name="content" rows="4" cols="50"></textarea><br><br>
+    <input type="submit" value="Submit">
+</form>
