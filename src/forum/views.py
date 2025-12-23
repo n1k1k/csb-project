@@ -1,7 +1,6 @@
 from urllib.parse import urlencode
 
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import connection
 from django.shortcuts import get_object_or_404, redirect, render
@@ -79,7 +78,7 @@ def post(request, post_id):
 
 
 def profile(request, user_id):
-    # ❌ Broken Access Control
+    # ❌ A01:2021 Broken Access Control
     user = get_object_or_404(User, pk=user_id)
 
     # ✅ FIXED: Enforce authentication and check ownership
