@@ -54,12 +54,13 @@ Post.objects.create(title=title, content=content, user=request.user)
 
 The profile page that displays the username along with email is intended to be only viewable to the user in question. Now anyone can view these pages by changing the id in the url
 
-LINK
+[LINK](https://github.com/n1k1k/csb-project/blob/d28389d0f91f8cc535322e2b7d98ad42ecbc95d0/src/forum/views.py#L82)
 
 #### Steps to reproduce
 
-1. If logged in, log out by clicking the button on the front page.
-2. Go to http://127.0.0.1:8000/forum/profile/<user_id>/
+1. When logged out go to http://127.0.0.1:8000/forum/profile/user_id/ where user_id is the id of any existing user </br>
+   OR </br>
+   When logged in go to http://127.0.0.1:8000/forum/profile/user_id/ where user_id is the id of another user than the one currently logged in
 
 #### How to fix?
 
