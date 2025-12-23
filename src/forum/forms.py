@@ -23,8 +23,9 @@ class SignUpForm(forms.ModelForm):
         return user
 
 
-# ✅ SAFE: Using Django's built-in UserCreationForm
 """
+✅ SAFE: Using Django's built-in UserCreationForm
+
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
 

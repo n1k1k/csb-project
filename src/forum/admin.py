@@ -8,6 +8,8 @@ admin.site.register(Comment)
 admin.site.has_permission = lambda request: True
 
 # ✅ Fix to restrict admin access to active staff users only
-# admin.site.has_permission = (
-#    lambda request: True if request.user.is_active and request.user.is_staff else False
-# )
+"""
+admin.site.has_permission = (
+    lambda request: True if request.user.is_active and request.user.is_staff else False
+)
+"""

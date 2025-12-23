@@ -87,7 +87,6 @@ LINK
 
 The issue can be fixed by adding the following lines to the AUTH_PASSWORD_VALIDATORS list in the settings.py file
 
-
 ```
 {
     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -96,6 +95,9 @@ The issue can be fixed by adding the following lines to the AUTH_PASSWORD_VALIDA
     "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
  },
 ```
+
+NOTE! The fix also requires the changes made to `SignUpForm`` in the fix for the previous flaw.
+
 
 ### FLAW 3: A01:2021 Broken Access Control
 
