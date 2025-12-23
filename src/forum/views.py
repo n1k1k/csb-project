@@ -1,4 +1,8 @@
 from urllib.parse import urlencode
+
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.db import connection
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -71,3 +75,20 @@ def post(request, post_id):
         "forum/post.html",
         {"post": post, "comments": comments, "error_message": error_message},
     )
+
+
+def profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, "registration/profile.html", {"user": user})
+
+
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("index")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
