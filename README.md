@@ -159,7 +159,7 @@ admin.site.has_permission = (
 
 There is a SQL injection vulnerability in the "Add a New Post" Form.
 
-[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/views.py#L)
+[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/views.py#L28)
 
 #### Steps to reproduce
 
