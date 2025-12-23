@@ -17,6 +17,7 @@ Start the app using command
 Passwords are currently stored in plaintext
 
 [LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/forms.py#L6)
+
 [LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/auth_backend.py#L4) (Custom Plaintext Authentication as Djangos built-in login expects hashed passwords)
 
 
