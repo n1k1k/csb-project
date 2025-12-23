@@ -1,5 +1,5 @@
 from urllib.parse import urlencode
-
+from django.db import connection
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -22,7 +22,18 @@ def index(request):
         if not title or not content:
             error_message = "Title and content are required."
         else:
-            Post.objects.create(title=title, content=content, user=request.user)
+            # ❌ A03:2021 – Injection (VULNERABLE RAW SQL)
+            sql = f"""
+            INSERT INTO forum_post (title, content, user_id)
+            VALUES ('{title}', '{content}', {request.user.id});
+            """
+
+            with connection.cursor() as cursor:
+                cursor.executescript(sql)
+
+            # ✅ SAFE ORM USAGE
+            # Post.objects.create(title=title, content=content, user=request.user)
+
             return redirect("index")
 
     posts_list = Post.objects.all()
