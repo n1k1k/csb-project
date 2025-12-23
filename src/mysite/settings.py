@@ -84,7 +84,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
-# ❌ A07:2021 – Identification and Authentication Failures
+# ❌ A07:2021 Identification and Authentication Failures
 # ✅ FIXED: Add missing password validators to the AUTH_PASSWORD_VALIDATORS list
 #  {
 #    "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -130,3 +130,9 @@ LOGIN_REDIRECT_URL = "/forum/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Authentication backend that handles plain text passwords
+AUTHENTICATION_BACKENDS = [
+    "forum.auth_backend.PlainTextAuthBackend",
+]

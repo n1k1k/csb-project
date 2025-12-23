@@ -1,5 +1,4 @@
 from urllib.parse import urlencode
-
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db import connection
@@ -26,7 +25,7 @@ def index(request):
         if not title or not content:
             error_message = "Title and content are required."
         else:
-            # ❌ A03:2021 – Injection (VULNERABLE RAW SQL)
+            # ❌ A03:2021 Injection (VULNERABLE RAW SQL)
             sql = f"""
             INSERT INTO forum_post (title, content, user_id)
             VALUES ('{title}', '{content}', {request.user.id});

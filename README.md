@@ -15,7 +15,61 @@ Start the app using command
 ``python manage.py runserver``
 
 
-### FLAW 1: A07:2021 Identification and Authentication Failures
+### FLAW 1: A02:2021 Cryptographic Failures
+
+Password are currently stored in plaintext
+
+LINK
+LINK (Custom Plaintext Authentication as Djangos built in log in expects hashed passwords)
+
+
+#### Steps to reproduce
+
+1. Go to the sign up page localhost:8000/forum/signup/
+2. Fill in user information and password
+
+In order to verify that the passwords are stored as plaintext...
+Open Django shell with command ``python manage.py shell`` and execute the following commands:
+1. ``from django.contrib.auth.models import User``
+2. ``u = User.objects.last()``
+3. ``print(u.password)``
+
+
+#### How to fix
+
+Replace the unsafe ``SignUpForm`` in ``forms.py`` with a version that uses Django's built-in UserCreationForm that hashes the password:
+
+```
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = (
+            "username",
+            "email",
+        )
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data.get("email")
+        if commit:
+            user.save()
+        return user
+
+```
+
+In addition remove the following plaintext authentication tool form ``settings.py``
+```
+AUTHENTICATION_BACKENDS = [
+    "forum.auth_backend.PlainTextAuthBackend",
+]
+```
+
+The ``auth_backend.py`` file can also be deleted
+
+
+### FLAW 2: A07:2021 Identification and Authentication Failures
 
 The application permits default, weak, or well-known passwords, such as "password" and passwords that closely resemble other attributes of the user
 
@@ -25,7 +79,7 @@ LINK
 
 1. Go to the signup page localhost:8000/forum/signup/
 2. Fill in username and email
-3. Set password and password confirmation as "password"
+3. Set password as "password"
 4. Click submit
 
 
@@ -43,7 +97,7 @@ The issue can be fixed by adding the following lines to the AUTH_PASSWORD_VALIDA
  },
 ```
 
-### FLAW 2: A01:2021 – Broken Access Control
+### FLAW 3: A01:2021 Broken Access Control
 
 The profile page that displays the username along with email is intended to be only viewable to the user in question. Now anyone can view these pages by changing the id in the url
 
@@ -78,9 +132,29 @@ Next we need to check that the id of the currently logged in user matches the gi
   user = request.user
 ```
 
+### FLAW 4: A05:2021 Security Misconfiguration 
+
+The app allows access to the admin page without being logged in. The admin page does not fortunately give permission to view or edit anything when logged out, but bypassing the logging page is still a security issue.
+
+LINK
+
+#### Steps to reproduce
+
+1. Go to  http://127.0.0.1:8000/admin/
 
 
-### FLAW 5: A03:2021 – Injection
+#### How to fix?
+
+Replace ``admin.site.has_permission = lambda request: True`` with:
+
+```
+admin.site.has_permission = (
+  lambda request: True if request.user.is_active and request.user.is_staff else False
+)
+```
+
+
+### FLAW 5: A03:2021 Injection
 
 There is a SQL injection vulnerability in the "Add a New Post" Form.
 
