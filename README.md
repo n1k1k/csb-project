@@ -1,32 +1,42 @@
+README.md contains the essay for project I for the Cyber Security Base course organised by the University of Helsinki
+
+
 # Discussion Forum App
 
-This is a simple discussion forum application for the University of Helsinki "Cyber Security Base" course. The app is implemented using Python & Django. 
+This project is a simple discussion forum application. In the app, users can make discussion posts and comments. 
+The project is implemented using Python & Django.  
 
-Requirements can be installed using command
+Requirements can be installed using the command:
+
 ``pip install -r requirements.txt``
 
-Initialise database using command
+Initialise database using the command:
+
 ``python manage.py migrate``
 
-Start the app using command
+Start the app using the command:
+
 ``python manage.py runserver``
 
 
 ### FLAW 1: A02:2021 Cryptographic Failures
+[LINK 1](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/forms.py#L6)
 
-Passwords are currently stored in plaintext
-
-[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/forms.py#L6)
-
-[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/auth_backend.py#L4) (Custom Plaintext Authentication as Djangos built-in login expects hashed passwords)
+[LINK 2](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/auth_backend.py#L4) 
+(Custom Plaintext Authentication)
 
 
-#### Steps to reproduce
+Passwords are currently stored in the database as plaintext instead of hash values. This is a serious cryptographic failure.  
 
-1. Go to the sign-up page localhost:8000/forum/signup/
-2. Fill in user information and password
+Steps to reproduce: 
 
-In order to verify that the passwords are stored as plaintext do the following:
+1. Go to the sign-up page localhost:8000/forum/signup/ 
+
+2. Fill in user information and password 
+
+3. Click sign up 
+
+In order to verify that the passwords are stored as plaintext, do the following:
 
 Open Django shell with command ``python manage.py shell`` and execute the following commands:
 1. ``from django.contrib.auth.models import User``
@@ -34,9 +44,10 @@ Open Django shell with command ``python manage.py shell`` and execute the follow
 3. ``print(u.password)``
 
 
-#### How to fix
+#### HOW TO FIX?
+[LINK](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/forum/forms.py#L26-L45)
 
-Replace the unsafe ``SignUpForm`` in ``forms.py`` with a version that uses Django's built-in UserCreationForm that hashes the password:
+In order to fix this flaw, we need to  replace the unsafe ``SignUpForm`` in ``forms.py``  with a version that hashes the password. One option is to use Django's built-in UserCreationForm that hashes the password:  
 
 ```
 class SignUpForm(UserCreationForm):
@@ -65,14 +76,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 ```
 
-The ``auth_backend.py`` file can also be deleted
+The ``auth_backend.py`` file can, in fact, be completely deleted (but this is not mandatory)  
 
 
 ### FLAW 2: A07:2021 Identification and Authentication Failures
 
-The application permits default, weak, or well-known passwords, such as "password" and passwords that closely resemble other attributes of the user
-
 [LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/mysite/settings.py#L93)
+
+The application permits default, weak, or well-known passwords, such as "password" and passwords that closely resemble other attributes of the user. This makes it easy to get into the accounts of the users who haven't set strong passwords unprompted. 
 
 #### Steps to reproduce
 
@@ -82,7 +93,8 @@ The application permits default, weak, or well-known passwords, such as "passwor
 4. Click submit
 
 
-#### How to fix?
+#### HOW TO FIX??
+[LINK](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L99-L106)
 
 The issue can be fixed by adding the following lines to the AUTH_PASSWORD_VALIDATORS list in the settings.py file
 
@@ -95,24 +107,27 @@ The issue can be fixed by adding the following lines to the AUTH_PASSWORD_VALIDA
  },
 ```
 
-NOTE! The fix also requires the changes made to `SignUpForm`` in the fix for the previous flaw.
+NOTE! The fix also requires the changes made to `SignUpForm` in the fix for the previous flaw.
 
 
 ### FLAW 3: A01:2021 Broken Access Control
 
-The profile page that displays the username along with email is intended to be only viewable to the user in question. Now, anyone can view these pages by changing the id in the url
-
 [LINK](https://github.com/n1k1k/csb-project/blob/d28389d0f91f8cc535322e2b7d98ad42ecbc95d0/src/forum/views.py#L81)
+
+Currently, there is a broken access control issue that allows users to act outside of their intended permissions. The profile page that displays the username along with email is intended to be only viewable to the user in question. The usernames are visible to all when making posts, but this flaw specifically exposes email addresses to malicious actors. Now, anyone can view these pages by changing the id in the URL. 
+ 
 
 #### Steps to reproduce
 
 1. When logged out go to localhost:8000/forum/profile/user_id/ where user_id is the id of any existing user </br>
    OR </br>
-   When logged in go to localhost:8000/forum/profile/user_id/ where user_id is the id of another user than the one currently logged in
+   When logged in, go to localhost:8000/forum/profile/user_id/ where user_id is the id of another user than the one currently logged in
 
-#### How to fix?
+#### HOW TO FIX??
 
-The issue can be fixed by first checking if the user is logged in:
+[LINK](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/forum/views.py#L83-L97)
+
+The issue can be fixed by first checking if the user is logged in and then checking that the id of the currently logged-in user matches the given id: 
 
 ```
   if not request.user.is_authenticated:
@@ -120,11 +135,7 @@ The issue can be fixed by first checking if the user is logged in:
       return redirect(
           login_url, error_message="You must be logged in to view profile"
       )
-```
 
-Next, we need to check that the id of the currently logged-in user matches the given id:
-
-```
   if request.user.id != user_id:
       from django.core.exceptions import PermissionDenied
 
@@ -133,33 +144,55 @@ Next, we need to check that the id of the currently logged-in user matches the g
   user = request.user
 ```
 
-### FLAW 4: A05:2021 Security Misconfiguration 
+### FLAW 4: A08:2021 – Software and Data Integrity Failures 
 
-The app allows access to the admin page without being logged in. The admin page does not fortunately give permission to view or edit anything when logged out, but bypassing the logging page is still a security issue.
-
-[LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/admin.py#L7)
-
-#### Steps to reproduce
-
-1. Go to  http://127.0.0.1:8000/admin/
+There is no login limiter applied to the login route. A user can attempt to log in an infinite number of times. This means that malicious attackers can access accounts (with weak passwords) by using brute force methods. 
 
 
-#### How to fix?
+#### HOW TO FIX? 
 
-Replace ``admin.site.has_permission = lambda request: True`` with:
+In order to fix this, we need to implement a rate limiter. There are multiple options for implementation. I decided to use the django-axes library. It can be implemented in the following way: 
+
+[Step 1](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
+
 
 ```
-admin.site.has_permission = (
-  lambda request: True if request.user.is_active and request.user.is_staff else False
-)
+INSTALLED_APPS = [ 
+    'axes', 
+    # ... other apps 
+]
 ```
+  
+[Step 2](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L59-L63): Add middleware in mysite/settings.py 
+
+ 
+```
+MIDDLEWARE = [ 
+    # ... other middleware 
+    'axes.middleware.AxesMiddleware', 
+] 
+```
+
+[Step 3](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L140-L144): Configure in ``mysite/settings.py``
+
+```
+AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts 
+AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes 
+AXES_LOCKOUT_TEMPLATE = 'security/lockout.html'  # Optional custom template 
+```
+
+STEP 4: Run migrations  
+
+``python manage.py migrate axes``
+
+This creates database tables that django-axes needs in order to track login activity. 
 
 
 ### FLAW 5: A03:2021 Injection
 
-There is a SQL injection vulnerability in the "Add a New Post" Form.
-
 [LINK](https://github.com/n1k1k/csb-project/blob/e0329fdd2bcea8188737bf5f0d13314de8f0bcde/src/forum/views.py#L28)
+
+There is a SQL injection vulnerability in the "Add a New Post" Form.
 
 #### Steps to reproduce
 
@@ -168,10 +201,10 @@ There is a SQL injection vulnerability in the "Add a New Post" Form.
 3. Set content to any string
 4. Click submit
 
-#### How to fix?
+#### HOW TO FIX?
+[LINK](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/forum/views.py#L37-L38)
 
-The code uses executescript() and raw SQL:
-
+Currently, the posts are added to the database using executescript() and raw SQL:  
 ```
 sql = f"""
   INSERT INTO forum_post (title, content, user_id)
@@ -182,7 +215,7 @@ sql = f"""
       cursor.executescript(sql)
 ```
 
-There are multiple ways to fix this. One option is to replace the above code with the following ORM:
+This is very unsafe and needs to be changed.  There are multiple ways to fix this. One option is to replace the above code with the following ORM:  
 
 ```
 Post.objects.create(title=title, content=content, user=request.user)
