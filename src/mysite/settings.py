@@ -39,7 +39,7 @@ INSTALLED_APPS = [
 ]
 
 
-# ❌ A08:2021 – Software and Data Integrity Failures
+# ❌ A09:2021 – Security Logging and Monitoring Failures
 # ✅ FIXED: Add axes to the INSTALLED_APPS list
 # INSTALLED_APPS += [
 #     "axes",
@@ -56,7 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ❌ A08:2021 – Software and Data Integrity Failures
+# ❌ A09:2021 – Security Logging and Monitoring Failures
 # ✅ FIXED: Add middleware for django-axes
 # MIDDLEWARE += [
 #     "axes.middleware.AxesMiddleware",
@@ -137,7 +137,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-# ❌ A08:2021 – Software and Data Integrity Failures
+# ❌ A09:2021 – Security Logging and Monitoring Failures
 # ✅ FIXED:
 # AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
 # AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes
