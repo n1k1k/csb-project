@@ -152,7 +152,7 @@ The app does not keep track of failed log in attempts (A09:2021). In fact, there
 
 To fix this, I chose to use the django-axes library. Axes records login attempts and prevents attackers from attempting further logins exter exceeding the configured attempt limit.
 
-[Step 1](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
+[Step 1](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
 
 
 ```
@@ -162,7 +162,7 @@ INSTALLED_APPS = [
 ]
 ```
   
-[Step 2](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L59-L63): Add middleware in mysite/settings.py 
+[Step 2](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L59-L63): Add middleware in mysite/settings.py 
 
  
 ```
@@ -172,7 +172,7 @@ MIDDLEWARE = [
 ] 
 ```
 
-[Step 3](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L140-L144): Configure in ``mysite/settings.py``
+[Step 3](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L140-L144 ): Configure in ``mysite/settings.py``
 
 ```
 AXES_FAILURE_LIMIT = 5
