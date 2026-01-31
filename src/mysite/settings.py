@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+
+# ❌ A08:2021 – Software and Data Integrity Failures
+# ✅ FIXED: Add axes to the INSTALLED_APPS list
+INSTALLED_APPS += [
+    "axes",
+]
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -45,6 +54,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+# ❌ A08:2021 – Software and Data Integrity Failures
+# ✅ FIXED: Add middleware for django-axes
+MIDDLEWARE += [
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -120,3 +135,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTHENTICATION_BACKENDS = [
     "forum.auth_backend.PlainTextAuthBackend",
 ]
+
+
+# ❌ A08:2021 – Software and Data Integrity Failures
+# ✅ FIXED:
+AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
+AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes
+AXES_LOCKOUT_TEMPLATE = "security/lockout.html"  # Optional custom template
