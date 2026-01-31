@@ -144,14 +144,13 @@ The issue can be fixed by first checking if the user is logged in and then check
   user = request.user
 ```
 
-### FLAW 4: A08:2021 – Software and Data Integrity Failures 
+### FLAW4: A09:2021 – Security Logging and Monitoring Failures
 
-There is no login limiter applied to the login route. A user can attempt to log in an infinite number of times. This means that malicious attackers can access accounts (with weak passwords) by using brute force methods. 
-
+The app does not keep track of failed log in attempts (A09:2021). In fact, there is no limit applied to the login route (A07:2021). A user can attempt to log in an infinite number of times. This means that malicious attackers can access accounts (with weak passwords) by using brute force methods. 
 
 #### HOW TO FIX? 
 
-In order to fix this, we need to implement a rate limiter. There are multiple options for implementation. I decided to use the django-axes library. It can be implemented in the following way: 
+To fix this, I chose to use the django-axes library. Axes records login attempts and prevents attackers from attempting further logins exter exceeding the configured attempt limit.
 
 [Step 1](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
 
