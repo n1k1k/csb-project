@@ -41,9 +41,9 @@ INSTALLED_APPS = [
 
 # ❌ A08:2021 – Software and Data Integrity Failures
 # ✅ FIXED: Add axes to the INSTALLED_APPS list
-INSTALLED_APPS += [
-    "axes",
-]
+# INSTALLED_APPS += [
+#     "axes",
+# ]
 
 
 MIDDLEWARE = [
@@ -58,9 +58,9 @@ MIDDLEWARE = [
 
 # ❌ A08:2021 – Software and Data Integrity Failures
 # ✅ FIXED: Add middleware for django-axes
-MIDDLEWARE += [
-    "axes.middleware.AxesMiddleware",
-]
+# MIDDLEWARE += [
+#     "axes.middleware.AxesMiddleware",
+# ]
 
 ROOT_URLCONF = "mysite.urls"
 
@@ -139,6 +139,6 @@ AUTHENTICATION_BACKENDS = [
 
 # ❌ A08:2021 – Software and Data Integrity Failures
 # ✅ FIXED:
-AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
-AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes
-AXES_LOCKOUT_TEMPLATE = "security/lockout.html"  # Optional custom template
+# AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
+# AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes
+# AXES_LOCKOUT_TEMPLATE = "security/lockout.html"  # Optional custom template
