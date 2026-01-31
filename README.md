@@ -176,9 +176,9 @@ MIDDLEWARE = [
 [Step 3](https://github.com/n1k1k/csb-project/blob/bfda68f36f4adb71fabc4442ea7514e41142fd06/src/mysite/settings.py#L140-L144): Configure in ``mysite/settings.py``
 
 ```
-AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts 
-AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes 
-AXES_LOCKOUT_TEMPLATE = 'security/lockout.html'  # Optional custom template 
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_DURATION = timedelta(minutes=30)
+AXES_LOCKOUT_TEMPLATE = 'security/lockout.html'
 ```
 
 STEP 4: Run migrations  
