@@ -152,7 +152,7 @@ The app does not keep track of failed log in attempts (A09:2021). In fact, there
 
 To fix this, I chose to use the django-axes library to track (and limit) login attempts.
 
-[Step 1](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
+[Step 1](https://github.com/n1k1k/csb-project/blob/e68d27d3664c9ddd1c6c471083602b4214245559/src/mysite/settings.py#L43-L47): Add to INSTALLED_APPS in mysite/settings.py 
 
 
 ```
@@ -162,7 +162,7 @@ INSTALLED_APPS = [
 ]
 ```
   
-[Step 2](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L59-L63): Add middleware in mysite/settings.py 
+[Step 2](https://github.com/n1k1k/csb-project/blob/e68d27d3664c9ddd1c6c471083602b4214245559/src/mysite/settings.py#L60-L64): Add middleware in mysite/settings.py 
 
  
 ```
@@ -172,7 +172,7 @@ MIDDLEWARE = [
 ] 
 ```
 
-[Step 3](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L140-L144 ): Add axes to ``AUTHENTICATION_BACKENDS`` Configure in ``mysite/settings.py``
+[Step 3](https://github.com/n1k1k/csb-project/blob/e68d27d3664c9ddd1c6c471083602b4214245559/src/mysite/settings.py#L142-L149): Add axes to ``AUTHENTICATION_BACKENDS`` Configure in ``mysite/settings.py``
 
 ```
 AUTHENTICATION_BACKENDS += [
@@ -184,7 +184,7 @@ AXES_COOLOFF_DURATION = timedelta(minutes=30)
 AXES_LOCKOUT_TEMPLATE = 'security/lockout.html'
 ```
 
-[STEP 4](): Implement logging for failed log in attempts. This will write failed attempts into a file called ``security.log``
+[STEP 4](https://github.com/n1k1k/csb-project/blob/e68d27d3664c9ddd1c6c471083602b4214245559/src/mysite/settings.py#L151-L189): Implement logging for failed login attempts. This will write failed attempts into a file called ``security.log``
 
 ```
 LOGGING = {
