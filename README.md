@@ -150,7 +150,7 @@ The app does not keep track of failed log in attempts (A09:2021). In fact, there
 
 #### HOW TO FIX? 
 
-To fix this, I chose to use the django-axes library. Axes records login attempts and prevents attackers from attempting further logins exter exceeding the configured attempt limit.
+To fix this, I chose to use the django-axes library to track (and limit) login attempts.
 
 [Step 1](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L42-L46): Add to INSTALLED_APPS in mysite/settings.py 
 
@@ -172,15 +172,64 @@ MIDDLEWARE = [
 ] 
 ```
 
-[Step 3](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L140-L144 ): Configure in ``mysite/settings.py``
+[Step 3](https://github.com/n1k1k/csb-project/blob/e6bf1f3e595fbf08d0554470f35e23f5e28e1ed9/src/mysite/settings.py#L140-L144 ): Add axes to ``AUTHENTICATION_BACKENDS`` Configure in ``mysite/settings.py``
 
 ```
+AUTHENTICATION_BACKENDS += [
+     "axes.backends.AxesStandaloneBackend",
+]
+
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_DURATION = timedelta(minutes=30)
 AXES_LOCKOUT_TEMPLATE = 'security/lockout.html'
 ```
 
-STEP 4: Run migrations  
+[STEP 4](): Implement logging for failed log in attempts. This will write failed attempts into a file called ``security.log``
+
+```
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "security": {
+            "format": "{levelname} {asctime} {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "security_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "security.log"),
+            "formatter": "security",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "security",
+        },
+    },
+    "loggers": {
+        "axes": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "axes.watch_login": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "axes.watch_logins": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+```
+
+
+STEP 5: Run migrations  
 
 ``python manage.py migrate axes``
 
