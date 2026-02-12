@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +46,10 @@ INSTALLED_APPS = [
 #     "axes",
 # ]
 
+INSTALLED_APPS += [
+    "axes",
+]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -61,6 +66,10 @@ MIDDLEWARE = [
 # MIDDLEWARE += [
 #     "axes.middleware.AxesMiddleware",
 # ]
+
+MIDDLEWARE += [
+    "axes.middleware.AxesMiddleware",
+]
 
 ROOT_URLCONF = "mysite.urls"
 
@@ -133,12 +142,54 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Authentication backend that handles plain text passwords
 AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
     "forum.auth_backend.PlainTextAuthBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 
 # ❌ A09:2021 – Security Logging and Monitoring Failures
 # ✅ FIXED:
-# AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
-# AXES_COOLOFF_DURATION = timedelta(minutes=30)  # Lock for 30 minutes
-# AXES_LOCKOUT_TEMPLATE = "security/lockout.html"  # Optional custom template
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_DURATION = timedelta(minutes=30)
+AXES_LOCKOUT_TEMPLATE = "security/lockout.html"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "security": {
+            "format": "{levelname} {asctime} {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "security_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "security.log"),
+            "formatter": "security",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "security",
+        },
+    },
+    "loggers": {
+        "axes": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "axes.watch_login": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "axes.watch_logins": {
+            "handlers": ["security_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
